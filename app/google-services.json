@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "484159718581",
+    "project_id": "sharedbasket-e2b05",
+    "storage_bucket": "sharedbasket-e2b05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:484159718581:android:73d015dfd28d4ecf4aeafc",
+        "android_client_info": {
+          "package_name": "com.example.sharedbasket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_U0PY0dsMtc91z3GXkBm5qQge5GdkhqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
