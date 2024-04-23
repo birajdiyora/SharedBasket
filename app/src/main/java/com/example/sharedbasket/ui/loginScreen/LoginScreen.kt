@@ -197,6 +197,7 @@ fun LoginScreen(
                                     isDialog = false
                                     "Login Successfully".toast()
                                     onNavigateToHomeScreen()
+
                                 }
 
                                 is ResultState.Failure -> {
@@ -211,11 +212,8 @@ fun LoginScreen(
                         }
                     }
                     scope.launch {
-                        val FCMToken = FirebaseMessaging.getInstance().token.await()
-                        Log.d("test",FCMToken)
-                        viewModel.updateFCMTokem(FCMTOken = FCMToken).collect{
-                            Log.d("test",it.toString())
-                        }
+
+
                     }
                 },
                 modifier = Modifier

@@ -36,7 +36,6 @@ class LoginScreenViewModel @Inject constructor(
         return repository.isUserAlreadyRegister(mobileNo)
     }
 
-    fun updateFCMTokem(FCMTOken : String) =
-        repository.updateFCMToken(FCMTOken)
+
 
 }

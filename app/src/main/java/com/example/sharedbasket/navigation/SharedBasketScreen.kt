@@ -16,4 +16,5 @@ sealed class BottomNavScreen(
     object NotificationScreen : BottomNavScreen(title = "Notification", route = "notification_screen")
     object GoToMarketScreen : BottomNavScreen(title = "GoToMarket", route = "gotomarket_screen")
     object ProfileScreen : BottomNavScreen(title = "Profile", route = "profile_screen")
+    object ReceivedRequestScreen : BottomNavScreen(title = "ReceivedRequest", route = "received_request")
 }

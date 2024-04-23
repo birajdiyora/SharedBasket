@@ -18,4 +18,6 @@ interface AuthRepository {
     fun updateFCMToken(FCMToken : String) : Flow<ResultState<String>>
 
     fun insertNotificationData(uid : String,notification: Notification) : Flow<ResultState<String>>
+
+    fun insertRequestData(notificationId:String,data :HashMap<String,Any>) : Flow<ResultState<String>>
 }

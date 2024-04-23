@@ -16,13 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,9 +39,11 @@ import com.example.sharedbasket.utils.Notification
 @Composable
 fun NotificationScreen(
     modifier: Modifier = Modifier,
-    viewModel: NotificationScreenViewModel = hiltViewModel()
+    viewModel: NotificationScreenViewModel = hiltViewModel(),
+    onGoToSendRequestActivity : (Notification) -> Unit
 ) {
     val notificationListState by viewModel.notificationListState.collectAsState()
+    val requestState by viewModel.requestState.collectAsState()
 //    Text(text = "Notification Screen")
 //    Log.d("test","in screen ${timestampToDateTimeString(notificationListState.notificationList[0].timeStamp)}")
     Box(
@@ -47,7 +52,8 @@ fun NotificationScreen(
     ) {
         LazyColumn(){
             items(notificationListState.notificationList.reversed()){notification ->
-                NotificationCard(notification)
+                Log.d("test1",notification.toString())
+                NotificationCard(notification,onGoToSendRequestActivity)
             }
         }
     }
@@ -55,7 +61,8 @@ fun NotificationScreen(
 
 @Composable
 fun NotificationCard(
-    notification: Notification
+    notification: Notification,
+    onGoToSendRequestActivity : (Notification) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -102,12 +109,25 @@ fun NotificationCard(
                 verticalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        onGoToSendRequestActivity(notification)
+                              },
                     modifier = Modifier
-                        .height(40.dp)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor =  if(notification.status.equals("pending")){
+                            Color(0xFFFFA000)
+                        }else{
+                            MaterialTheme.colorScheme.primary
+                        }
+                    )
                 ) {
                     Text(
-                        text = "Send Request",
+                        text = if(notification.status.equals("pending")){
+                            "Pending"
+                        } else{
+                            "Send Request"
+                        },
                         fontSize = 11.sp
                     )
                 }

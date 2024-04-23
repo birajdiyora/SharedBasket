@@ -64,7 +64,7 @@ class GoToMarketScreenViewModel @Inject constructor(
         FCMNotificationManaer.sendNotification(FCMToken, senderName, "I am Going To ${marketName}")
        viewModelScope.launch {
            authRepository.insertNotificationData(
-               notification = Notification(senderName = senderName, marketName = marketName),
+               notification = Notification(senderName = senderName, marketName = marketName, senderUID = currentUser.uid),
                uid= uid).collect{
                Log.d("test",it.toString())
            }

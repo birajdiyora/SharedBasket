@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -114,19 +115,24 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun updateFCMToken(FCMToken : String): Flow<ResultState<String>> = callbackFlow{
-        db.collection("userData").document(currentUser!!.uid).update(
-            mapOf(
-            "FCMToken" to FCMToken
-        )
-        )
-            .addOnCompleteListener {
-                Log.d("test","Updated..")
-            trySend(ResultState.Success(it.toString()))
+        if(currentUser!=null){
+            db.collection("userData").document(currentUser!!.uid).update(
+                mapOf(
+                    "FCMToken" to FCMToken
+                )
+            )
+                .addOnCompleteListener {
+                    Log.d("test","Updated..")
+                    trySend(ResultState.Success(it.toString()))
+                }
+                .addOnFailureListener {
+                    Log.d("test",it.toString())
+                    trySend(ResultState.Failure(it))
+                }
+        }else{
+            "some error".toast()
         }
-            .addOnFailureListener {
-                Log.d("test",it.toString())
-                trySend(ResultState.Failure(it))
-            }
+
         awaitClose {
             close()
         }
@@ -143,10 +149,14 @@ class AuthRepositoryImpl @Inject constructor(
                 if (documentSnapshot.exists()) {
                     val existingNotifications = documentSnapshot.data?.get("notificationList") as? List<HashMap<String, Any>>
                     existingNotifications?.forEach { notificationData ->
+                        val notificationId = notificationData["notificationId"] as String
                         val senderName = notificationData["senderName"] as String
                         val marketName = notificationData["marketName"] as String ?: ""
                         val timestamp = notificationData["timeStamp"] as Long
-                        val existingNotification = Notification(senderName, marketName, timestamp)
+                        val senderUID = notificationData["senderUID"] as String
+                        val status = notificationData["status"] as String
+                        val existingNotification =
+                            Notification(notificationId = notificationId,senderUID = senderUID, senderName = senderName, marketName = marketName, timeStamp =  timestamp, status = status)
                         notificationList.add(existingNotification)
                     }
                 }
@@ -173,5 +183,52 @@ class AuthRepositoryImpl @Inject constructor(
         awaitClose {
             close()
         }
+    }
+
+    override fun insertRequestData(notificationId:String,data: HashMap<String, Any>): Flow<ResultState<String>> =
+        callbackFlow{
+            trySend(ResultState.Loading)
+            db.collection("requestItem").document(notificationId).set(data)
+                .addOnCompleteListener {
+                    trySend(ResultState.Success(it.toString()))
+                }
+                .addOnFailureListener {
+                    trySend(ResultState.Failure(it))
+                }
+            val userDatRef = db.collection("userData").document(data["senderId"].toString())
+
+            userDatRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val notificationList =
+                        documentSnapshot.get("notificationList") as MutableList<Map<String, Any>>?
+                    notificationList?.let { list ->
+                        val updatedList = mutableListOf<Map<String, Any>>()
+                        for (notification in list) {
+                            if (notification["notificationId"] == notificationId) {
+                                // Update the status of the notification
+                                val updatedNotification = notification.toMutableMap()
+                                updatedNotification["status"] = "pending"
+                                updatedList.add(updatedNotification)
+                            } else {
+                                updatedList.add(notification)
+                            }
+                        }
+                        userDatRef.update("notificationList", updatedList)
+                            .addOnSuccessListener {
+                                // Notification status updated successfully
+                                Log.d("test", "Notification status updated successfully!")
+                            }
+                            .addOnFailureListener { e ->
+                                // Error updating notification status
+                                Log.w("test", "Error updating notification status", e)
+                            }
+                    }
+                }
+                .addOnFailureListener {
+                    Log.d("test", "Error getting document", it)
+                }
+            awaitClose {
+                close()
+            }
     }
 }

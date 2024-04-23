@@ -10,7 +10,8 @@ import com.example.sharedbasket.ui.registerScreen.RegisterScreen
 import com.example.sharedbasket.ui.loginScreen.LoginScreen
 import com.example.sharedbasket.ui.mapScreen.MapScreen
 import com.example.sharedbasket.ui.notificationScreen.NotificationScreen
-import com.example.sharedbasket.ui.profileScreen.ProfileScreen
+import com.example.sharedbasket.ui.receivedRequestScreen.ReceivedRequestScreen
+import com.example.sharedbasket.utils.Notification
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -38,17 +39,20 @@ fun NavGraph(
 
 @Composable
 fun BottomNavGraph(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    onGoToSendRequestActivity : (Notification) -> Unit
 ) {
     NavHost(navController = navHostController, startDestination = BottomNavScreen.NotificationScreen.route){
         composable(route = BottomNavScreen.NotificationScreen.route){
-            NotificationScreen()
+            NotificationScreen(onGoToSendRequestActivity = {
+                onGoToSendRequestActivity(it)
+            })
         }
         composable(route = BottomNavScreen.GoToMarketScreen.route){
             GoToMarketScreen()
         }
-        composable(route = BottomNavScreen.ProfileScreen.route){
-            ProfileScreen()
+        composable(route = BottomNavScreen.ReceivedRequestScreen.route){
+            ReceivedRequestScreen()
         }
     }
 }

@@ -13,6 +13,7 @@ import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.Flow
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.sharedbasket.notification.NotificationChannel
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.map
@@ -27,6 +28,11 @@ class SharedBasketApplication : Application() {
         super.attachBaseContext(base)
         app = this
         appContext = base
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        NotificationChannel.createNotificationChannel(this)
     }
 }
 

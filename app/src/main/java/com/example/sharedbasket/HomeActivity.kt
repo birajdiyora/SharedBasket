@@ -1,6 +1,8 @@
 package com.example.sharedbasket
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -38,12 +40,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.SharedBasketTheme
 import com.example.sharedbasket.navigation.BottomNavGraph
 import com.example.sharedbasket.navigation.BottomNavScreen
 import com.example.sharedbasket.ui.homeScreen.HomeScreen
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class HomeActivity : ComponentActivity() {
@@ -80,6 +85,7 @@ class HomeActivity : ComponentActivity() {
                                 containerColor = Color.Transparent
                             ) {
                                 NavigationBarItem(
+                                    modifier = Modifier,
                                     selected = currentScreen == BottomNavScreen.NotificationScreen.route,
                                     onClick = {
                                         currentScreen = BottomNavScreen.NotificationScreen.route
@@ -108,16 +114,17 @@ class HomeActivity : ComponentActivity() {
                                         Text(text = "Go to market")
                                     })
                                 NavigationBarItem(
-                                    selected = currentScreen == BottomNavScreen.ProfileScreen.route,
+                                    selected = currentScreen == BottomNavScreen.ReceivedRequestScreen.route,
                                     onClick = {
-                                        currentScreen = BottomNavScreen.ProfileScreen.route
-                                        navHostController.navigate(BottomNavScreen.ProfileScreen.route)
+                                        currentScreen = BottomNavScreen.ReceivedRequestScreen.route
+                                        navHostController.navigate(BottomNavScreen.ReceivedRequestScreen.route)
                                     },
                                     icon = {
-                                           Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null)
+                                        Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null)
                                     },
                                     label = {
-                                        Text(text = "Profile")
+                                        Text(
+                                            text = "Requests")
                                     })
                             }
                         }
@@ -127,7 +134,16 @@ class HomeActivity : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(it)
                         ) {
-                            BottomNavGraph(navHostController = navHostController)
+                            BottomNavGraph(
+                                navHostController = navHostController,
+                                onGoToSendRequestActivity = {
+                                    Log.d("test2",it.toString())
+                                    val intent = Intent(this@HomeActivity,SendRequestActivity::class.java).apply {
+                                        putExtra("notification",it)
+                                    }
+                                    startActivity(intent)
+                                }
+                            )
                         }
                     }
                 }
