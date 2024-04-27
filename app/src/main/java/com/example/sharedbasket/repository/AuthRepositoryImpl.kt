@@ -146,17 +146,17 @@ class AuthRepositoryImpl @Inject constructor(
             .addOnSuccessListener { documentSnapshot ->
                 val notificationList = mutableListOf<Notification>()
 
-                if (documentSnapshot.exists()) {
+                if (documentSnapshot["notificationList"] != null) {
                     val existingNotifications = documentSnapshot.data?.get("notificationList") as? List<HashMap<String, Any>>
                     existingNotifications?.forEach { notificationData ->
                         val notificationId = notificationData["notificationId"] as String
-                        val senderName = notificationData["senderName"] as String
-                        val marketName = notificationData["marketName"] as String ?: ""
+                        val marketerName = notificationData["marketerName"] as String
+                        val marketName = notificationData["marketName"] as String
                         val timestamp = notificationData["timeStamp"] as Long
-                        val senderUID = notificationData["senderUID"] as String
+                        val marketerId = notificationData["marketerId"] as String
                         val status = notificationData["status"] as String
                         val existingNotification =
-                            Notification(notificationId = notificationId,senderUID = senderUID, senderName = senderName, marketName = marketName, timeStamp =  timestamp, status = status)
+                            Notification(marketerId = marketerId,notificationId = notificationId, marketerName = marketerName, marketName = marketName, timeStamp =  timestamp, status = status)
                         notificationList.add(existingNotification)
                     }
                 }
@@ -195,21 +195,23 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnFailureListener {
                     trySend(ResultState.Failure(it))
                 }
-            val userDatRef = db.collection("userData").document(data["senderId"].toString())
-
+            val userDatRef = db.collection("userData").document(data["itemsRequesterId"].toString())
+            Log.d("test4",data["marketerId"].toString())
             userDatRef.get()
                 .addOnSuccessListener { documentSnapshot ->
                     val notificationList =
                         documentSnapshot.get("notificationList") as MutableList<Map<String, Any>>?
+                    Log.d("test",notificationList.toString())
                     notificationList?.let { list ->
                         val updatedList = mutableListOf<Map<String, Any>>()
                         for (notification in list) {
-                            if (notification["notificationId"] == notificationId) {
+                            if (notification["notificationId"] == data["notificationId"]) {
                                 // Update the status of the notification
                                 val updatedNotification = notification.toMutableMap()
                                 updatedNotification["status"] = "pending"
                                 updatedList.add(updatedNotification)
                             } else {
+                                Log.d("test","in notification status update ${notification}")
                                 updatedList.add(notification)
                             }
                         }
@@ -220,7 +222,7 @@ class AuthRepositoryImpl @Inject constructor(
                             }
                             .addOnFailureListener { e ->
                                 // Error updating notification status
-                                Log.w("test", "Error updating notification status", e)
+                                Log.d("test", "Error updating notification status", e)
                             }
                     }
                 }

@@ -78,7 +78,7 @@ fun SendRequestScreen(
                                 text = "Send Request To ",
                             )
                             Text(
-                                text = " ${notification.senderName}",
+                                text = " ${notification.marketerName}",
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = FontFamily.SansSerif
                             )
@@ -120,6 +120,9 @@ fun SendRequestScreen(
                                             is ResultState.Failure -> {
                                                 "Failed To Send request".toast()
                                             }
+                                            else ->{
+
+                                            }
                                         }
                                     }
                                 }
@@ -137,7 +140,7 @@ fun SendRequestScreen(
                 }
             }
         ) {
-            if(notification.status.equals("pending")) {
+            if(notification.status.equals("pending") || notification.status.equals("confirm")) {
                 Column(
                     modifier = Modifier
                         .padding(it)
@@ -249,6 +252,13 @@ fun ListItemCard(
                 text = "${item.itemDescription}",
                 fontSize = 15.sp
                 )
+            if(!item.itemPrice.equals("")){
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${item.itemPrice}",
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }

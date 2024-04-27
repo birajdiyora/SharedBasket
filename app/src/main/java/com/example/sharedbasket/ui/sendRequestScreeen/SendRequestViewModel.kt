@@ -1,5 +1,6 @@
 package com.example.sharedbasket.ui.sendRequestScreeen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ class SendRequestViewModel @Inject constructor(
     init {
         db.collection("requestItem").document(notification!!.notificationId).get()
             .addOnSuccessListener {document ->
+                Log.d("test","${document.data}")
                 if(document["items"] != null) {
                     _itemListState.update {
                         it.copy(
@@ -47,25 +49,26 @@ class SendRequestViewModel @Inject constructor(
         notificationId = notification.notificationId,
         hashMapOf(
             "notificationId" to notification.notificationId,
-            "senderId" to currentUser!!.uid,
-            "receiverId" to notification.senderUID,
+            "itemsRequesterId" to currentUser!!.uid,
+            "marketerId" to notification.marketerId,
             "status" to "pending",
             "marketName" to notification.marketName,
-            "items" to items
+            "items" to items,
+            "timeStamp" to System.currentTimeMillis()
         )
     )
-   private fun convertHashMapListToItemList(hashMapList: List<HashMap<String, Any>>): List<Item> {
-        val itemList = mutableListOf<Item>()
+}
+fun convertHashMapListToItemList(hashMapList: List<HashMap<String, Any>>): List<Item> {
+    val itemList = mutableListOf<Item>()
 
-        for (hashMap in hashMapList) {
-            val itemDescription = hashMap["itemDescription"] as? String ?: ""
-            val itemName = hashMap["itemName"] as? String ?: ""
-            val itemPrice = (hashMap["itemPrice"] as? Int) ?: 0
+    for (hashMap in hashMapList) {
+        val itemDescription = hashMap["itemDescription"] as? String ?: ""
+        val itemName = hashMap["itemName"] as? String ?: ""
+        val itemPrice = (hashMap["itemPrice"] as? String) ?: ""
 
-            val item = Item(itemName, itemDescription,itemPrice)
-            itemList.add(item)
-        }
-
-        return itemList
+        val item = Item(itemName, itemDescription,itemPrice)
+        itemList.add(item)
     }
+
+    return itemList
 }

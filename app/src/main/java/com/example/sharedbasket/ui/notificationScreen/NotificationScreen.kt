@@ -50,9 +50,10 @@ fun NotificationScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        Log.d("test1",notificationListState.notificationList.toString())
         LazyColumn(){
             items(notificationListState.notificationList.reversed()){notification ->
-                Log.d("test1",notification.toString())
+
                 NotificationCard(notification,onGoToSendRequestActivity)
             }
         }
@@ -81,7 +82,7 @@ fun NotificationCard(
                     .weight(0.5f)
             ) {
                 Text(
-                    text = "${notification.senderName}",
+                    text = "${notification.marketerName}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -117,6 +118,8 @@ fun NotificationCard(
                     colors = ButtonDefaults.buttonColors(
                         containerColor =  if(notification.status.equals("pending")){
                             Color(0xFFFFA000)
+                        }else if(notification.status.equals("confirm")){
+                                Color(0xFFFFA000)
                         }else{
                             MaterialTheme.colorScheme.primary
                         }
@@ -125,9 +128,11 @@ fun NotificationCard(
                     Text(
                         text = if(notification.status.equals("pending")){
                             "Pending"
-                        } else{
-                            "Send Request"
-                        },
+                        } else if(notification.status.equals("confirm")){
+                            "Confirm"
+                        }else{
+                             "Send request"
+                             },
                         fontSize = 11.sp
                     )
                 }

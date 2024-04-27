@@ -16,11 +16,11 @@ import java.io.IOException
 
 class FCMNotificationManager {
 
-    fun sendNotification(FCMToken : String,senderName : String,message : String) {
+    fun sendNotification(FCMToken : String,marketerName : String,message : String) {
         val JsonObject = JSONObject()
         val notificationObj = JSONObject()
         val dataObj = JSONObject()
-        notificationObj.put("title",senderName)
+        notificationObj.put("title",marketerName)
         notificationObj.put("body",message)
         notificationObj.put("android_channel_id", NotificationChannel.CHANNEL_ID)
         notificationObj.put("sound", "android.resource://com.example.sharedbasket/${R.raw.notification_tone}")

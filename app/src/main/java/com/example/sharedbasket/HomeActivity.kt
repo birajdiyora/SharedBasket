@@ -1,5 +1,6 @@
 package com.example.sharedbasket
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -52,9 +53,11 @@ import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class HomeActivity : ComponentActivity() {
+    @SuppressLint("UnrememberedMutableState")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val fromRequestReceived = intent.getBooleanExtra("fromRRD",false)
         setContent {
             SharedBasketTheme {
                 Surface(
@@ -134,12 +137,29 @@ class HomeActivity : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(it)
                         ) {
+                            var startingScreen by remember {
+                                mutableStateOf("")
+                            }
+                            if(fromRequestReceived){
+                                startingScreen = BottomNavScreen.ReceivedRequestScreen.route
+                                currentScreen = BottomNavScreen.ReceivedRequestScreen.route
+                            }else{
+                                startingScreen = BottomNavScreen.NotificationScreen.route
+                                currentScreen = BottomNavScreen.NotificationScreen.route
+                            }
                             BottomNavGraph(
                                 navHostController = navHostController,
+                                startingScreen = startingScreen,
                                 onGoToSendRequestActivity = {
                                     Log.d("test2",it.toString())
                                     val intent = Intent(this@HomeActivity,SendRequestActivity::class.java).apply {
                                         putExtra("notification",it)
+                                    }
+                                    startActivity(intent)
+                                },
+                                onGoToReceivedRequestDetailActivity = {
+                                    val intent = Intent(this@HomeActivity,ReceivedRequestDetailActivity::class.java).apply {
+                                        putExtra("receivedRequest",it)
                                     }
                                     startActivity(intent)
                                 }

@@ -1,6 +1,7 @@
 package com.example.sharedbasket.navigation
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,6 +13,7 @@ import com.example.sharedbasket.ui.mapScreen.MapScreen
 import com.example.sharedbasket.ui.notificationScreen.NotificationScreen
 import com.example.sharedbasket.ui.receivedRequestScreen.ReceivedRequestScreen
 import com.example.sharedbasket.utils.Notification
+import com.example.sharedbasket.utils.ReceivedRequestState
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -40,9 +42,11 @@ fun NavGraph(
 @Composable
 fun BottomNavGraph(
     navHostController: NavHostController,
-    onGoToSendRequestActivity : (Notification) -> Unit
+    startingScreen : String,
+    onGoToSendRequestActivity : (Notification) -> Unit,
+    onGoToReceivedRequestDetailActivity : (ReceivedRequestState) -> Unit
 ) {
-    NavHost(navController = navHostController, startDestination = BottomNavScreen.NotificationScreen.route){
+    NavHost(navController = navHostController, startDestination = startingScreen){
         composable(route = BottomNavScreen.NotificationScreen.route){
             NotificationScreen(onGoToSendRequestActivity = {
                 onGoToSendRequestActivity(it)
@@ -52,7 +56,9 @@ fun BottomNavGraph(
             GoToMarketScreen()
         }
         composable(route = BottomNavScreen.ReceivedRequestScreen.route){
-            ReceivedRequestScreen()
+            ReceivedRequestScreen(
+                onGoToReceivedRequestDetailActivity = onGoToReceivedRequestDetailActivity
+            )
         }
     }
 }

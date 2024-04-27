@@ -60,8 +60,8 @@ class NotificationScreenViewModel @Inject constructor(
     private fun updateNotificationList() {
         db.collection("userData").document(currentUser!!.uid).get()
             .addOnSuccessListener {document->
-                Log.d("test","in Database")
-                Log.d("test",document["notificationList"].toString())
+                Log.d("test3","in Database")
+                Log.d("test3",document["notificationList"].toString())
                 if(document["notificationList"]!=null) {
                     _notificationListState.update {
                         it.copy(
@@ -75,12 +75,12 @@ class NotificationScreenViewModel @Inject constructor(
         val notificationList = mutableListOf<Notification>()
         for (hashMap in hashMapList) {
             val notificationId = hashMap["notificationId"] as String
-            val senderName = hashMap["senderName"] as String
+            val marketerName = hashMap["marketerName"] as String
             val marketName = hashMap["marketName"] as String
             val timeStamp = hashMap["timeStamp"] as Long
-            val senderUID = hashMap["senderUID"] as String
+            val marketerId = hashMap["marketerId"] as String
             val status = hashMap["status"] as String
-            val notification = Notification(notificationId = notificationId, senderUID = senderUID, senderName = senderName, marketName =  marketName, timeStamp =  timeStamp, status = status)
+            val notification = Notification(notificationId = notificationId, marketerId = marketerId, marketerName = marketerName, marketName =  marketName, timeStamp =  timeStamp, status = status)
             notificationList.add(notification)
         }
         return notificationList

@@ -6,8 +6,8 @@ import java.util.UUID
 
 data class Notification(
     val notificationId : String = UUID.randomUUID().toString(),
-    val senderUID: String,
-    val senderName: String,
+    val marketerId: String,
+    val marketerName: String,
     val marketName: String,
     val timeStamp: Long = System.currentTimeMillis(),
     val status : String = ""
@@ -18,14 +18,14 @@ data class Notification(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readLong()!!,
+        parcel.readLong(),
         parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(notificationId)
-        parcel.writeString(senderUID)
-        parcel.writeString(senderName)
+        parcel.writeString(marketerId)
+        parcel.writeString(marketerName)
         parcel.writeString(marketName)
         parcel.writeLong(timeStamp)
         parcel.writeString(status)

@@ -4,4 +4,5 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_send_request">SendRequestActivity</string>
+    <string name="title_activity_received_request_detail">ReceivedRequestDetailActivity</string>
 </resources>

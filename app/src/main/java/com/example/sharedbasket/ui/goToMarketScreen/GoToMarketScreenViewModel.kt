@@ -60,11 +60,11 @@ class GoToMarketScreenViewModel @Inject constructor(
         }
     }
 
-   private fun sendNotification(FCMToken : String,senderName : String,marketName : String,uid : String) {
-        FCMNotificationManaer.sendNotification(FCMToken, senderName, "I am Going To ${marketName}")
+   private fun sendNotification(FCMToken : String,marketerName : String,marketName : String,uid : String) {
+        FCMNotificationManaer.sendNotification(FCMToken, marketerName, "I am Going To ${marketName}")
        viewModelScope.launch {
            authRepository.insertNotificationData(
-               notification = Notification(senderName = senderName, marketName = marketName, senderUID = currentUser.uid),
+               notification = Notification(marketerName = marketerName, marketName = marketName, marketerId = currentUser.uid),
                uid= uid).collect{
                Log.d("test",it.toString())
            }
@@ -96,7 +96,7 @@ class GoToMarketScreenViewModel @Inject constructor(
                             Log.d("test", fcmToken)
                             sendNotification(
                                 FCMToken = fcmToken,
-                                senderName = currentUserName,
+                                marketerName = currentUserName,
                                 marketName = "$marketName",
                                 uid = uid
                             )

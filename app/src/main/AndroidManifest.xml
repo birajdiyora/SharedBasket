@@ -20,6 +20,11 @@
         android:theme="@style/Theme.SharedBasket"
         tools:targetApi="31">
         <activity
+            android:name=".ReceivedRequestDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_received_request_detail"
+            android:theme="@style/Theme.SharedBasket" />
+        <activity
             android:name=".SendRequestActivity"
             android:exported="false"
             android:label="@string/title_activity_send_request"
@@ -49,9 +54,7 @@
             android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.SharedBasket">
-
-        </activity>
+            android:theme="@style/Theme.SharedBasket"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="false"
