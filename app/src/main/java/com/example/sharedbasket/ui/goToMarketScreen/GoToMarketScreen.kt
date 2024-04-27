@@ -29,6 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.sharedbasket.common.CommonDialog
+import com.example.sharedbasket.common.toast
+import com.example.sharedbasket.utils.ResultState
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -42,7 +45,13 @@ fun GoToMarketScreen(
     var marketName by remember {
         mutableStateOf("")
     }
+    var isDialog by remember {
+        mutableStateOf(false)
+    }
     val scope = rememberCoroutineScope()
+    if(isDialog)
+        CommonDialog()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,8 +95,29 @@ fun GoToMarketScreen(
                     scope.launch {
                         Log.d("test1",FirebaseMessaging.getInstance().token.await())
                     }
-                    scope.launch {
-                        viewModel.sendNotificationToAll(marketName = marketName)
+                    if(!marketName.equals("")) {
+                        scope.launch {
+                            viewModel.sendNotificationToAll(marketName = marketName).collect {
+                                when (it) {
+                                    is ResultState.Loading -> {
+                                        isDialog = true
+                                    }
+
+                                    is ResultState.Success -> {
+                                        isDialog = false
+                                        "Notifications Send Successfully".toast()
+                                        marketName = ""
+                                    }
+
+                                    is ResultState.Failure -> {
+                                        isDialog = false
+                                        "Failed".toast()
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        "Enter Market Name".toast()
                     }
 
                 }) {

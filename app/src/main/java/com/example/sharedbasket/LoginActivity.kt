@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,11 +37,16 @@ class LoginActivity : ComponentActivity() {
 
     companion object{
         lateinit var userManager: UserManager
+        lateinit var firebaseAuth: FirebaseAuth
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
         userManager = UserManager(this)
+        firebaseAuth = FirebaseAuth.getInstance()
+        if(firebaseAuth.currentUser != null){
+            startActivity(Intent(this,HomeActivity::class.java))
+        }
         setContent {
             SharedBasketTheme {
 

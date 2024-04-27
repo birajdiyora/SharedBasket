@@ -233,4 +233,70 @@ class AuthRepositoryImpl @Inject constructor(
                 close()
             }
     }
+
+    override fun updateItemStatusInUserData(itemsRequesterId: String,notificationId: String,status: String): Flow<ResultState<String>> = callbackFlow {
+        Log.w("test","in updateItemsStatus")
+        trySend(ResultState.Loading)
+        val userDatRef = db.collection("userData").document(itemsRequesterId)
+        userDatRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                val notificationList =
+                    documentSnapshot.get("notificationList") as MutableList<Map<String, Any>>?
+                Log.w("test",notificationList.toString())
+                notificationList?.let { list ->
+                    val updatedList = mutableListOf<Map<String, Any>>()
+                    for (notification in list) {
+                        if (notification["notificationId"] == notificationId) {
+                            // Update the status of the notification
+                            val updatedNotification = notification.toMutableMap()
+                            updatedNotification["status"] = status
+                            updatedList.add(updatedNotification)
+                        } else {
+//                            Log.d("test","in notification status update ${notification}")
+                            updatedList.add(notification)
+                        }
+                    }
+                    userDatRef.update("notificationList", updatedList)
+                        .addOnSuccessListener {
+                            trySend(ResultState.Success("success"))
+                            Log.w("test","user data status updated")
+                            // Notification status updated successfully
+//                            Log.d("test", "Notification status updated successfully!")
+                        }
+                        .addOnFailureListener { e ->
+                            trySend(ResultState.Failure(e))
+                            Log.w("test","user data status not updated")
+                            // Error updating notification status
+//                            Log.d("test", "Error updating notification status", e)
+                        }
+                }
+            }
+            .addOnFailureListener {
+                trySend(ResultState.Failure(it))
+                Log.w("test","user data status error updated")
+//                Log.d("test", "Error getting document", it)
+            }
+        awaitClose {
+            close()
+        }
+    }
+
+    override fun updateItemStatusInRequestItem(
+        notificationId: String,
+        status: String
+    ): Flow<ResultState<String>> = callbackFlow{
+        trySend(ResultState.Loading)
+        db.collection("requestItem").document(notificationId).update(
+            hashMapOf("status" to status) as Map<String, Any>
+        ).addOnCompleteListener {
+            trySend(ResultState.Success("Success"))
+            Log.w("test","reuest data status updated")
+        }
+            .addOnFailureListener {
+                trySend(ResultState.Failure(it))
+            }
+        awaitClose {
+            close()
+        }
+    }
 }

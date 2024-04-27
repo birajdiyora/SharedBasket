@@ -113,8 +113,10 @@ fun LoginScreen(
                     if (mobileNo.length < 10) {
                         "Enter 10 Digit".toast()
                     } else {
+                        isDialog = true
                         scope.launch(Dispatchers.Main) {
                             viewModel.isUserAlreadyRegister(mobileNo = mobileNo).collect{
+
                                 if(it == ResultExist.Exist){
                                     viewModel.createUserWithPhone(
                                         mobile = mobileNo,

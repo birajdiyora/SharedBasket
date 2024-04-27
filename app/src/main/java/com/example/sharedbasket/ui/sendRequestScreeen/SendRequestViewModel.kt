@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.sharedbasket.repository.AuthRepository
 import com.example.sharedbasket.utils.Item
 import com.example.sharedbasket.utils.ItemListState
@@ -17,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,6 +59,26 @@ class SendRequestViewModel @Inject constructor(
             "timeStamp" to System.currentTimeMillis()
         )
     )
+
+    fun updateItemStatus(status : String) {
+        viewModelScope.launch {
+            authRepository.updateItemStatusInUserData(
+                itemsRequesterId = currentUser!!.uid,
+                notificationId = notification!!.notificationId,
+                status = status
+            ).collect {
+
+            }
+        }
+        viewModelScope.launch {
+            authRepository.updateItemStatusInRequestItem(
+                notificationId = notification!!.notificationId,
+                status = status
+            ).collect{
+
+            }
+        }
+    }
 }
 fun convertHashMapListToItemList(hashMapList: List<HashMap<String, Any>>): List<Item> {
     val itemList = mutableListOf<Item>()

@@ -1,6 +1,7 @@
 package com.example.sharedbasket.ui.receivedRequestDetailScreen
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -27,9 +29,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,7 +58,7 @@ fun ReceivedRequestDetailScreen(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "Update Items Price",
+                            text = viewModel.receivedRequestState.itemsRequesterName,
                         )
                     }
                 },
@@ -71,17 +76,34 @@ fun ReceivedRequestDetailScreen(
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                OutlinedButton(
-                    onClick = {
-                              Log.d("test6",items.toList().toString())
-                        viewModel.updateItemPrice(items)
-                        onGoToHomeActivity()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                ) {
-                    Text(text = "Accept Request And Update Price")
+                if(viewModel.receivedRequestState.status.equals("delivered")){
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "All Items Are delivered",
+                            color = Color(0xFF32AC38),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }else {
+                    OutlinedButton(
+                        onClick = {
+//                              Log.d("test6",items.toList().toString())
+                            viewModel.updateItemPrice(items)
+                            onGoToHomeActivity()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                    ) {
+                        Text(text = "Accept Request And Update Price")
+                    }
                 }
             }
         }
@@ -94,10 +116,17 @@ fun ReceivedRequestDetailScreen(
                 .padding(it)
                 .verticalScroll(scrollState)
         ) {
-            items.forEachIndexed { index, item ->
+            if(viewModel.receivedRequestState.status.equals("delivered")){
+             items.forEach { 
+                 displayItem(item = it)
+             }
+            }else {
+                items.forEachIndexed { index, item ->
 //                items[index] = item
-                displayItem(item = item, index = index,items = items)
+                    displayItemForPrice(item = item, index = index, items = items)
+                }
             }
+
 //           LazyColumn {
 ////               itemsIndexed(viewModel.receivedRequestState!!.items){
 ////                    displayItem(item = it)
@@ -111,7 +140,7 @@ fun ReceivedRequestDetailScreen(
 }
 
 @Composable
-fun displayItem(
+fun displayItemForPrice(
     item: Item,
     index : Int,
     items : MutableList<Item>
@@ -137,17 +166,50 @@ fun displayItem(
                 fontSize = 15.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = item.itemPrice,
-                onValueChange = {
-                                items[index] = item.copy(itemPrice = it)
-                },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                label = {
-                    Text(text = "Enter Price")
-                }
+                OutlinedTextField(
+                    value = item.itemPrice,
+                    onValueChange = {
+                        items[index] = item.copy(itemPrice = it)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = {
+                        Text(text = "Enter Price")
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    )
+                )
+        }
+    }
+}
+
+@Composable
+fun displayItem(
+    item: Item
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp)
+        ) {
+            Text(
+                text = "${item.itemName}",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "${item.itemDescription}",
+                fontSize = 15.sp
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            
         }
     }
 }

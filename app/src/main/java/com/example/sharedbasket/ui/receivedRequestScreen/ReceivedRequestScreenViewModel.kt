@@ -61,7 +61,7 @@ class ReceivedRequestScreenViewModel @Inject constructor(
                             .addOnFailureListener {
 
                             }.await()
-                        Log.d("test5", data.toString())
+//                        Log.d("test5", data.toString())
                         val receivedRequestState = ReceivedRequestState(
                             notificationId = document.id,
                             marketerId = data["marketerId"] as String,
@@ -73,7 +73,7 @@ class ReceivedRequestScreenViewModel @Inject constructor(
                             timeStamp = data["timeStamp"] as Long
                         )
                         receivedRequests.add(receivedRequestState)
-                        Log.d("test5",receivedRequestState.itemsRequesterId)
+                        Log.d("test5",receivedRequestState.status)
                     }
                     _receivedRequestStateList.update {
                         it.copy(

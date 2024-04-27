@@ -39,7 +39,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,7 +61,7 @@ fun SendRequestScreen(
     viewModel: SendRequestViewModel = hiltViewModel(),
     onGoToHomeActivity : () -> Unit
 ) {
-    val items = remember { mutableStateListOf<Item>() }
+    val items = remember { mutableStateListOf<Item>(Item("","","")) }
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     val itemListState by viewModel.itemListState.collectAsState()
@@ -74,9 +76,9 @@ fun SendRequestScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            Text(
-                                text = "Send Request To ",
-                            )
+//                            Text(
+//                                text = "Send Request To ",
+//                            )
                             Text(
                                 text = " ${notification.marketerName}",
                                 fontWeight = FontWeight.Bold,
@@ -136,11 +138,44 @@ fun SendRequestScreen(
                                 fontSize = 17.sp
                             )
                         }
+                    }else if(notification.status.equals("confirm")){
+                        OutlinedButton(
+                            onClick = {
+//                                Log.d("test1", items.toList().toString())
+                                scope.launch {
+                                    viewModel.updateItemStatus("delivered")
+                                    onGoToHomeActivity()
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                        ) {
+                            Text(
+                                text = "Delivered",
+                                fontSize = 17.sp
+                            )
+                        }
+                    }else if(notification.status.equals("delivered")){
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "All Items Are delivered",
+                                color = Color(0xFF32AC38),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
         ) {
-            if(notification.status.equals("pending") || notification.status.equals("confirm")) {
+            if(notification.status.equals("pending") || notification.status.equals("confirm") || notification.status.equals("delivered")) {
                 Column(
                     modifier = Modifier
                         .padding(it)
@@ -153,13 +188,12 @@ fun SendRequestScreen(
                         }
                     }
                 }
-            }else {
+            }else if(notification.status.equals("")){
                 Column(
                     modifier = Modifier
                         .padding(it)
                         .verticalScroll(state = scrollState)
                 ) {
-
                     Log.d("test", "status is blank ${notification.status}")
                     items.forEachIndexed { index, item ->
                         AddItemCard(index, item, items)
@@ -176,6 +210,19 @@ fun SendRequestScreen(
                         }
                     }
                 }
+            }else{
+//                Column(
+//                    modifier = Modifier
+//                        .padding(it)
+//                ) {
+//                    LazyColumn(
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        items(itemListState.itemList) {
+//                            ListItemCard(it)
+//                        }
+//                    }
+//                }
             }
         }
     }

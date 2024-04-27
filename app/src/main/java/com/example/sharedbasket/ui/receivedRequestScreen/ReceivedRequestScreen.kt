@@ -10,11 +10,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Icon
+import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,9 +49,20 @@ fun ReceivedRequestScreen(
             .fillMaxWidth()
     ) {
 //        Log.d("tes6",receivedRequestState.list.toString())
-        LazyColumn {
-            items(receivedRequestState.list){
-                ReceivedRequestCard(receivedRequestState = it, onGoToReceivedRequestDetailActivity = onGoToReceivedRequestDetailActivity)
+        if(receivedRequestState.list.isEmpty()){
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }else {
+            LazyColumn {
+                items(receivedRequestState.list.reversed()) {
+                    ReceivedRequestCard(
+                        receivedRequestState = it,
+                        onGoToReceivedRequestDetailActivity = onGoToReceivedRequestDetailActivity
+                    )
+                }
             }
         }
     }
@@ -54,6 +72,7 @@ fun ReceivedRequestCard(
     receivedRequestState: ReceivedRequestState,
     onGoToReceivedRequestDetailActivity : (ReceivedRequestState) -> Unit
 ) {
+//    Log.w("test",receivedRequestState.toString())
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,29 +117,82 @@ fun ReceivedRequestCard(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = {
-                        onGoToReceivedRequestDetailActivity(receivedRequestState)
-                    },
+                Row(
                     modifier = Modifier
-                        .height(40.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =  if(false){
-                            Color(0xFFFFA000)
-                        }else{
-                            MaterialTheme.colorScheme.primary
-                        }
-                    )
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = if(false){
-                            "Pending"
-                        } else{
-                            "View"
-                        },
-                        fontSize = 11.sp
-                    )
+                    Column(
+                        modifier = Modifier,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+//                        Text(
+//                            text = "Status",
+//                            fontSize = 14.sp
+//                        )
+                        Text(
+                            text = if(receivedRequestState.status.equals("pending")){
+                                "Pending"
+                            }else if(receivedRequestState.status.equals("confirm")){
+                                "Confirm"
+                            }else if(receivedRequestState.status.equals("delivered")){
+                                "Delivered"
+                            }else{
+                                ""
+                            }
+                            ,
+                            fontWeight = FontWeight.Bold,
+//                            color = Color(0xFFFFA000)
+//                            color = Color(0xFF32AC38)
+                            color = if(receivedRequestState.status.equals("pending")){
+                                Color.Black
+                            }else if (receivedRequestState.status.equals("confirm")){
+                                Color(0xFFFF9930)
+                            }else if(receivedRequestState.status.equals("delivered")){
+                                Color(0xFF32AC38)
+                            }else{
+                                Color.Transparent
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+                        onClick = { onGoToReceivedRequestDetailActivity(receivedRequestState)  },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = null,
+                            tint = Color.White)
+                    }
                 }
+//                Button(
+//                    onClick = {
+//                        onGoToReceivedRequestDetailActivity(receivedRequestState)
+//                    },
+//                    modifier = Modifier
+//                        .height(40.dp),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor =  if(receivedRequestState.status.equals("pending")){
+//                            Color(0xFFFFA000)
+//                        }else{
+//                            MaterialTheme.colorScheme.primary
+//                        }
+//                    )
+//                ) {
+//                    Text(
+//                        text = if(receivedRequestState.status.equals("pending")){
+//                            "Pending"
+//                        } else if (receivedRequestState.status.equals("confirm")){
+//                            "Confirm"
+//                        }else{
+//                             "View"
+//                             },
+//                        fontSize = 11.sp
+//                    )
+//                }
             }
         }
     }

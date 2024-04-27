@@ -7,11 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.sharedbasket.notification.FCMNotificationManager
 import com.example.sharedbasket.repository.AuthRepository
 import com.example.sharedbasket.utils.Notification
+import com.example.sharedbasket.utils.ResultState
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -72,7 +76,8 @@ class GoToMarketScreenViewModel @Inject constructor(
     }
 
 
-    suspend fun sendNotificationToAll(marketName : String) {
+    suspend fun sendNotificationToAll(marketName : String) : Flow<ResultState<String>> = callbackFlow{
+        trySend(ResultState.Loading)
         if(currentUser == null){
             Log.d("test","user is null")
         }
@@ -103,7 +108,14 @@ class GoToMarketScreenViewModel @Inject constructor(
                         }
                     }
                 }
+                trySend(ResultState.Success("success"))
+            }
+            .addOnFailureListener {
+                trySend(ResultState.Failure(it))
             }.await()
+        awaitClose {
+            close()
+        }
     }
 
 

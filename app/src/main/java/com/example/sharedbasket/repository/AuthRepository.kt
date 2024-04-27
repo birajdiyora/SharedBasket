@@ -20,4 +20,8 @@ interface AuthRepository {
     fun insertNotificationData(uid : String,notification: Notification) : Flow<ResultState<String>>
 
     fun insertRequestData(notificationId:String,data :HashMap<String,Any>) : Flow<ResultState<String>>
+
+    fun updateItemStatusInUserData(itemsRequesterId: String,notificationId: String,status : String) : Flow<ResultState<String>>
+
+    fun updateItemStatusInRequestItem(notificationId: String,status: String) : Flow<ResultState<String>>
 }
