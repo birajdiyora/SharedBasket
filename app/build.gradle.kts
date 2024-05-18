@@ -117,5 +117,11 @@ dependencies {
 
     //okhttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    //firebase auth
+    implementation ("androidx.browser:browser:1.5.0")
+    implementation ("com.google.android.play:integrity:1.1.0")
+    implementation ("com.google.firebase:firebase-appcheck-safetynet:16.1.2")
+
 }
 //apply plugin: ("com.google.gms.google-services")

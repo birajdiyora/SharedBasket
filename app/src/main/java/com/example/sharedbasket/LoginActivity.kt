@@ -44,6 +44,7 @@ class LoginActivity : ComponentActivity() {
         requestNotificationPermission()
         userManager = UserManager(this)
         firebaseAuth = FirebaseAuth.getInstance()
+//        firebaseAuth.firebaseAuthSettings.setAppVerificationDisabledForTesting(true)
         if(firebaseAuth.currentUser != null){
             startActivity(Intent(this,HomeActivity::class.java))
         }

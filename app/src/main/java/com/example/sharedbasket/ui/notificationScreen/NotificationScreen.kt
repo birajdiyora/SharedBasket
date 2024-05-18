@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.sharedbasket.common.DataIsEmpty
 import com.example.sharedbasket.navigation.BottomNavScreen
 import com.example.sharedbasket.timestampToDateTimeString
 import com.example.sharedbasket.utils.Notification
@@ -66,16 +67,20 @@ fun NotificationScreen(
             .fillMaxSize()
     ) {
         Log.d("test1",notificationListState.notificationList.toString())
-        if(notificationListState.notificationList.isEmpty()){
+        if(viewModel.isDataReceived){
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth(),
                 color = MaterialTheme.colorScheme.primary
             )
         }else {
-            LazyColumn() {
-                items(notificationListState.notificationList.reversed()) { notification ->
-                    NotificationCard(notification, onGoToSendRequestActivity)
+            if(notificationListState.notificationList.isEmpty()){
+                DataIsEmpty()
+            }else {
+                LazyColumn() {
+                    items(notificationListState.notificationList.reversed()) { notification ->
+                        NotificationCard(notification, onGoToSendRequestActivity)
+                    }
                 }
             }
         }

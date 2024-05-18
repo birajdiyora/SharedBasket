@@ -2,6 +2,7 @@ package com.example.sharedbasket.ui.registerScreen
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -147,6 +148,7 @@ fun RegisterScreen(
                                             is ResultState.Failure -> {
                                                 isDialog = false
                                                 "Some Error Accure".toast()
+                                                Log.d("td",it.msg.toString())
                                             }
 
                                             is ResultState.Loading -> {
@@ -202,6 +204,7 @@ fun RegisterScreen(
                                 }
 
                                 is ResultState.Failure -> {
+                                    Log.d("td",it.msg.toString())
                                     isDialog = false
                                     "Some Error Accure".toast()
                                 }

@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,12 +52,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.SharedBasketTheme
 import com.example.sharedbasket.navigation.BottomNavGraph
 import com.example.sharedbasket.navigation.BottomNavScreen
 import com.example.sharedbasket.ui.homeScreen.HomeScreen
+import com.google.firebase.Firebase
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.initialize
+import com.google.firebase.ktx.initialize
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.tasks.await
@@ -68,7 +74,14 @@ class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val fromRequestReceived = intent.getBooleanExtra("fromRRD",false)
+//        Firebase.initialize(context = this)
+//        Firebase.appCheck.installAppCheckProviderFactory(
+//            SafetyNetAppCheckProviderFactory.getInstance()
+//        )
+
         setContent {
+            val viewModel : HomeActivityViewModel = hiltViewModel()
+//            val userName = viewModel.userName.collectAsState()
             SharedBasketTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -106,7 +119,7 @@ class HomeActivity : ComponentActivity() {
                                             horizontalArrangement = Arrangement.End
                                         ) {
                                             Text(
-                                                text = "Biraj dkhf dfhjf kdfj",
+                                                text = "${viewModel.username}",
                                                 overflow = TextOverflow.Ellipsis,
                                                 maxLines = 1,
                                                 fontWeight = FontWeight.Bold,

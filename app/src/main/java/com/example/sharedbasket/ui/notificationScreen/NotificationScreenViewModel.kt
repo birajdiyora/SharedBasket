@@ -2,6 +2,9 @@ package com.example.sharedbasket.ui.notificationScreen
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharedbasket.repository.AuthRepository
@@ -28,6 +31,8 @@ class NotificationScreenViewModel @Inject constructor(
     val currentUser = auth.currentUser
     private val _notificationListState = MutableStateFlow(NotificationListState())
     val notificationListState = _notificationListState.asStateFlow()
+
+    var isDataReceived by mutableStateOf(true)
 
     private var _requestState = MutableStateFlow("")
     val requestState = _requestState.asStateFlow()
@@ -58,9 +63,9 @@ class NotificationScreenViewModel @Inject constructor(
     private fun updateFCMTokem(FCMTOken : String) =
         authRepository.updateFCMToken(FCMTOken)
     private fun updateNotificationList() {
+
         db.collection("userData").document(currentUser!!.uid).get()
             .addOnSuccessListener {document->
-                Log.d("test3","in Database")
                 Log.d("test3",document["notificationList"].toString())
                 if(document["notificationList"]!=null) {
                     _notificationListState.update {
@@ -69,6 +74,10 @@ class NotificationScreenViewModel @Inject constructor(
                         )
                     }
                 }
+                isDataReceived = false
+            }
+            .addOnFailureListener {
+                Log.d("test3","in Database ${it}")
             }
     }
     fun convertToNotificationList(hashMapList: List<HashMap<String, Any>>): List<Notification> {

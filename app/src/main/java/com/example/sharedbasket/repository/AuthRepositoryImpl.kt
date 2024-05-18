@@ -101,7 +101,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun insertUserData(user: HashMap<String, Any>): Flow<ResultState<String>> = callbackFlow{
         trySend(ResultState.Loading)
-         db.collection("userData").document(currentUser!!.uid).set(user)
+         db.collection("userData").document(FirebaseAuth.getInstance().currentUser!!.uid).set(user)
              .addOnCompleteListener {
                  trySend(ResultState.Success(it.toString()))
              }
@@ -115,8 +115,8 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun updateFCMToken(FCMToken : String): Flow<ResultState<String>> = callbackFlow{
-        if(currentUser!=null){
-            db.collection("userData").document(currentUser!!.uid).update(
+        if(FirebaseAuth.getInstance().currentUser!!.uid!=null){
+            db.collection("userData").document(FirebaseAuth.getInstance().currentUser!!.uid).update(
                 mapOf(
                     "FCMToken" to FCMToken
                 )

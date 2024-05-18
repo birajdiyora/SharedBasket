@@ -36,6 +36,4 @@ class LoginScreenViewModel @Inject constructor(
         return repository.isUserAlreadyRegister(mobileNo)
     }
 
-
-
 }

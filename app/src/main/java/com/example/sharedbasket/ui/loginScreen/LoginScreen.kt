@@ -132,6 +132,7 @@ fun LoginScreen(
                                             is ResultState.Failure -> {
                                                 isDialog = false
                                                 "Some Error Accure".toast()
+                                                Log.w("test",it.msg)
                                             }
 
                                             is ResultState.Loading -> {
@@ -141,6 +142,7 @@ fun LoginScreen(
                                     }
                                 }else{
                                     "User Is Not Register".toast()
+                                    isDialog = false
                                 }
                             }
                         }

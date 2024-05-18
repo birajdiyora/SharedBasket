@@ -1,7 +1,9 @@
 package com.example.sharedbasket.ui.receivedRequestScreen
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharedbasket.repository.AuthRepository
@@ -29,6 +31,8 @@ class ReceivedRequestScreenViewModel @Inject constructor(
     private val _receivedRequestStateList = MutableStateFlow(ReceivedRequestStateList())
     val receivedRequestStateList = _receivedRequestStateList.asStateFlow()
 
+    var isDataReceived by mutableStateOf(true)
+
     init {
 
         viewModelScope.launch {
@@ -44,7 +48,7 @@ class ReceivedRequestScreenViewModel @Inject constructor(
 
     private suspend fun updateReceivedrequestData() {
         db.collection("requestItem")
-            .whereEqualTo("marketerId", currentUser!!.uid)
+            .whereEqualTo("marketerId", FirebaseAuth.getInstance().currentUser!!.uid)
             .get()
             .addOnSuccessListener { documents ->
 //                Log.d("test5",documents.documents[0].toString())
@@ -81,6 +85,7 @@ class ReceivedRequestScreenViewModel @Inject constructor(
                         )
                     }
                 }
+                isDataReceived = false
             }
             .addOnFailureListener {
 
