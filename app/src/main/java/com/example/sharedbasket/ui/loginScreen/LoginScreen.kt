@@ -201,7 +201,6 @@ fun LoginScreen(
                                     isDialog = false
                                     "Login Successfully".toast()
                                     onNavigateToHomeScreen()
-
                                 }
 
                                 is ResultState.Failure -> {

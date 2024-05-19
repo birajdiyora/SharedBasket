@@ -234,6 +234,7 @@ class MapActivity () : ComponentActivity() {
                                     isDialogStateChange(false)
                                     val intent = Intent(context,HomeActivity::class.java)
                                     startActivity(intent)
+                                    finish()
                                 }
                                 is ResultState.Failure ->{
                                     Log.d("test","Failed")
